@@ -6,6 +6,6 @@ from presentation.Controller import Controller
 """
 
 if __name__ == '__main__':
-    chromedriver_path = "resource/chromedriver.exe"
+    chromedriver_path = "chromedriver.exe"
     bot = Controller(chromedriver_path)
     bot.start()

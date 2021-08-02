@@ -106,7 +106,7 @@ class Controller:
 
         if series is None:
             # no results found for the given name
-            print_err(series["data"])
+            print_err("No series found matching the given name")
             self.__player.reset()
             choice = input(Colors.g.value + "Type s to search for another series (any other choice will return to main "
                                             "options menu):\n" + Colors.end.value)
@@ -116,11 +116,11 @@ class Controller:
                 return
         else:
             # results found for the given name
-            print(Colors.g.value + "Found " + str(len(series["data"]) - 1) + " matches:" + Colors.end.value)
-            for i in range(0, len(series["data"]) - 1):
-                print(Colors.g.value + str(i + 1) + Colors.end.value + "\n" + series["data"][i])
+            print(Colors.g.value + "Found " + str(len(series)-1) + " matches:" + Colors.end.value)
+            for i in range(0, len(series) - 1):
+                print(Colors.g.value + str(i + 1) + Colors.end.value + "\n" + series[i])
             print(Colors.p.value + "Choose series (number): " + Colors.end.value)
-            choice = get_int_input(1, len(series["data"]))
+            choice = get_int_input(1, len(series))
             # present play options for the chosen series
             self.__player.goto(series_num=choice - 1, url=None)
             self.play_options()
