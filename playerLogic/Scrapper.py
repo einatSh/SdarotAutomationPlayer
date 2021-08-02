@@ -2,7 +2,7 @@ import playerLogic.PlayerException as PErr
 import requests
 import time
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
+from selenium.common.exceptions import TimeoutException, ElementNotVisibleException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -37,10 +37,7 @@ class Scrapper:
         """
         self.__driver = None
         self.__series_found = None
-        self.__curr_se = 1
-        self.__curr_ep = 1
-        self.__seasons = None
-        self.__episodes = None
+        self.__last_season = False
 
     def search_series(self, series_name: str) -> [str] or None:
         """
@@ -148,21 +145,25 @@ class Scrapper:
         :param ep: episode to start from, or None to play all episodes
         :return: None
         """
-        self.init_chrome(self.__driver.current_url)
+        try:
+            self.init_chrome(self.__driver.current_url)
 
-        seasons = self.__driver.find_element_by_id("season").find_elements_by_css_selector("li")
-        if se:
-            seasons = seasons[se-1:]
+            seasons = self.__driver.find_element_by_id("season").find_elements_by_css_selector("li")
+            if se:
+                seasons = seasons[se-1:]
 
-        last = int(seasons[len(seasons)-1].text)
-        for season in seasons:
-            curr_se = int(season.text)
-            if curr_se == last:
-                self.__last_season = True
-            if curr_se == se:
-                self.play_season(season, ep)
-            else:
-                self.play_season(season, None)
+            last = int(seasons[len(seasons)-1].text)
+            for season in seasons:
+                curr_se = int(season.text)
+                if curr_se == last:
+                    self.__last_season = True
+                if curr_se == se:
+                    self.play_season(season, ep)
+                else:
+                    self.play_season(season, None)
+        except WebDriverException:
+            self.reset()
+            raise PErr.ChromeExited
 
     def play_season(self, se, ep: int or None) -> None:
         """
@@ -186,7 +187,7 @@ class Scrapper:
                 self.play_episode(episode)
                 if self.__last_season and curr_ep == last:
                     self.__driver.quit()
-                    self.__driver = None
+                    self.reset()
                     raise PErr.EndOfSeries
         except TimeoutException:
             self.play_season(se, ep)

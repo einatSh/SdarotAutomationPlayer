@@ -2,7 +2,8 @@ from playerLogic.Scrapper import Scrapper
 from enum import Enum
 import re
 import playerLogic.PlayerException as PErr
-
+# need to add a solution for when the user exits the chrome window unexpectedly - return him to the main screen
+# error for this is - selenium.common.exceptions.WebDriverException: Message: chrome not reachable
 
 def print_err(err_msg: str):
     print(Colors.r.value + err_msg + Colors.end.value)
@@ -66,7 +67,7 @@ class Controller:
         print(Colors.p.value + "Choose play option:\n"
                                "1." + Colors.end.value + " Play all\n" +
               Colors.p.value + "2." + Colors.end.value + " Choose season\n" +
-              Colors.p.value + "3." + Colors.end.value + " Choose season and episode\n")
+              Colors.p.value + "3." + Colors.end.value + " Choose season and episode")
         option = get_int_input(1, 3)
 
         try:
@@ -93,6 +94,9 @@ class Controller:
                 self.__player.play(se, None)
         except PErr.EndOfSeries:
             print(Colors.b.value + "Series ended - returning to main options menu" + Colors.end.value)
+            self.start()
+        except PErr.ChromeExited:
+            print(Colors.b.value + "Chrome window exited - returning to main options menu")
             self.start()
 
     def search_by_name(self) -> None:
