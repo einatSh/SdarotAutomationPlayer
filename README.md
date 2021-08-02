@@ -11,4 +11,8 @@ Ducomentation can be found here: https://www.selenium.dev/
 
 More info can be found at:  https://chromedriver.chromium.org/
 
+### To start the program
+1. cd to the folder of the repo.
+2. run python main.py
+
 ##### I have no rights for any of the video content shown, or for the site sdarot, this is for personal use only.
